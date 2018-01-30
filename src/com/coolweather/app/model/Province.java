@@ -1,4 +1,4 @@
-package com.example.coolweather.app.model;
+package com.coolweather.app.model;
 
 public class Province {
 	private int id;

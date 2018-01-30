@@ -1,13 +1,12 @@
-package com.example.coolweather.app.db;
+package com.coolweather.app.db;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.coolweather.app.model.City;
-import com.example.coolweather.app.model.County;
-import com.example.coolweather.app.model.Province;
+import com.coolweather.app.model.City;
+import com.coolweather.app.model.County;
+import com.coolweather.app.model.Province;
 
-import android.R.raw;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,9 +22,10 @@ public class CoolWeatherDB {
 	
 	private SQLiteDatabase db;
 	
+	
 	//将构造方法私有化
 	private CoolWeatherDB(Context context){
-		CoolWeatherDBHelper dbHelper = new CoolWeatherDBHelper(context, DB_NAME, null, VERSION);
+		CoolWeatherOpenHelper dbHelper = new CoolWeatherOpenHelper(context, DB_NAME, null, VERSION);
 		db = dbHelper.getWritableDatabase();
 	}
 	
