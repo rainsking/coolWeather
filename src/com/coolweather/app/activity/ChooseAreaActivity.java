@@ -51,15 +51,11 @@ public class ChooseAreaActivity extends Activity{
 	//当前选中的级别
 	private int currentLevel;
 	
-	//@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
-		
-		//StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();  
-		//StrictMode.setThreadPolicy(policy);
 		
 		listView = (ListView) findViewById(R.id.list_view);
 		titleText = (TextView) findViewById(R.id.title_text);
@@ -78,7 +74,8 @@ public class ChooseAreaActivity extends Activity{
 				}
 			}
 		});
-		queryProvinces();  //加载省级数据
+		//queryProvinces();  //加载省级数据
+		queryCities();
 	}
 	
 	/**
@@ -90,7 +87,7 @@ public class ChooseAreaActivity extends Activity{
 		if(provinceList.size() > 0){
 			dataList.clear();
 			for(Province province : provinceList){
-				dataList.add(province.getProvinceName());
+				dataList.add(province.getId() + province.getProvinceName());
 			}
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
@@ -149,32 +146,14 @@ public class ChooseAreaActivity extends Activity{
 		String key = "8d2f6aae5270454ebb88f4bdb4b801fd";
 		if("province".equals(type)){
 			address = "http://flash.weather.com.cn/wmaps/xml/china.xml";
-		} else if(!"province".equals(type)){
-			address = "https://api.heweather.com/s6/weather?location=" + pyName + "&key=" + key;
+		} else if("city".equals(type)){
+			//address = "http://flash.weather.com.cn/wmaps/xml/" + pyName + ".xml";
+			address = "http://flash.weather.com.cn/wmaps/xml/hunan.xml";
+		} else {
+			//https://free-api.heweather.com/s6/weather/forecast?location=xiangyin&key=8d2f6aae5270454ebb88f4bdb4b801fd
+			address = "https://free-api.heweather.com/s6/weather/forecast?location=" + pyName + "&key=" + key;
 		}
 		showProgressDialog();
-//		try{
-//	        if (conn.getResponseCode() != 200) {
-//	        	System.out.println(3);
-//	            throw new RuntimeException("请求url失败");
-//	        }
-//	        InputStream inStream = conn.getInputStream();
-//	        List<Province> provinces = StreamTool.parseXML(inStream);
-//	        for(Province p : provinces){
-//				coolWeatherDB.saveProvince(p);
-//			}
-//	        closeProgressDialog();
-//			if("province".equals(type)){
-//				queryProvinces();
-//			} else if("city".equals(type)){
-//				queryCities();
-//			} else if("county".equals(type)){
-//				queryCounties();
-//			}
-//	        inStream.close();
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
 		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
 			@Override
 			public void onFinish(InputStream inStream) throws Exception {
@@ -182,6 +161,7 @@ public class ChooseAreaActivity extends Activity{
 				if("province".equals(type)){
 					result = Utility.handleProvincesResponse(coolWeatherDB, inStream);
 				} else if("city".equals(type)){
+					System.out.println(selectedProvince.getId()+"-----------------------------------------------");
 					result = Utility.handleCitiesResponse(coolWeatherDB, inStream, selectedProvince.getId());
 				} else if("county".equals(type)) {
 					result = Utility.handleCountiesResponse(coolWeatherDB, inStream, selectedCity.getId());

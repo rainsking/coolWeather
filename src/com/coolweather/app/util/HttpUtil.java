@@ -22,6 +22,7 @@ public class HttpUtil {
 					if(listener != null){
 						listener.onFinish(in);
 					}
+					in.close();
 				} catch (Exception e) {
 					if(listener != null){
 						listener.onError(e);
