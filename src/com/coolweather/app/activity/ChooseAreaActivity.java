@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.coolweather.app.R;
 import com.coolweather.app.db.CoolWeatherDB;
-import com.coolweather.app.db.CoolWeatherOpenHelper;
 import com.coolweather.app.model.City;
 import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
@@ -51,15 +50,12 @@ public class ChooseAreaActivity extends Activity{
 	private City selectedCity;
 	//当前选中的级别
 	private int currentLevel;
-
-	private CoolWeatherOpenHelper dbHelper;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
-		dbHelper = new CoolWeatherOpenHelper(this, "cool_weather.db", null, 1);
 		
 		listView = (ListView) findViewById(R.id.list_view);
 		titleText = (TextView) findViewById(R.id.title_text);
@@ -146,9 +142,13 @@ public class ChooseAreaActivity extends Activity{
 	private void quertFromServer(final String code, final String type){
 		String address;
 		if(!TextUtils.isEmpty(code)){
+			///http://flash.weather.com.cn/wmaps/xml/yueyang.xml
 			address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";
 		} else {
-			address = "http://www.weather.com.cn/data/list3/city.xml";
+			//http://flash.weather.com.cn/wmaps/xml/china.xml
+			//https://free-api.heweather.com
+			//https://free-api.heweather.com/s6/weather/forecast?location=beijing&key=8d2f6aae5270454ebb88f4bdb4b801fd
+			address = "http://flash.weather.com.cn/wmaps/xml/china.xml";
 		}
 		showProgressDialog();
 		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
