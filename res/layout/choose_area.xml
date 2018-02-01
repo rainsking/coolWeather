@@ -5,6 +5,7 @@
     android:orientation="vertical" >
     
     <RelativeLayout 
+        android:id="@+id/relative_title"
         android:layout_width="match_parent" 
         android:layout_height="45.0dp" 
         android:background="#484E61">
@@ -21,7 +22,8 @@
     <ListView 
         android:id="@+id/list_view" 
         android:layout_width="match_parent" 
-        android:layout_height="match_parent" >   
+        android:layout_height="match_parent" 
+        android:layout_below="@id/relative_title" >   
     </ListView>
 
 </RelativeLayout>

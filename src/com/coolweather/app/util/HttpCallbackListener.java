@@ -1,6 +1,8 @@
 package com.coolweather.app.util;
 
+import java.io.InputStream;
+
 public interface HttpCallbackListener {
-	void onFinish(String response);
+	void onFinish(InputStream inStream) throws Exception;
 	void onError(Exception e);
 }

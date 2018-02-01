@@ -49,6 +49,7 @@ public class CoolWeatherDB {
 		if(province != null){
 			ContentValues values = new ContentValues();
 			values.put("province_name", province.getProvinceName());
+			values.put("province_pyName", province.getProvincePyName());
 			values.put("province_code", province.getProvinceCode());
 			db.insert("Province", null, values);
 		}
@@ -66,6 +67,7 @@ public class CoolWeatherDB {
 				Province province = new Province();
 				province.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				province.setProvinceName(cursor.getString(cursor.getColumnIndex("province_name")));
+				province.setProvincePyName(cursor.getString(cursor.getColumnIndex("province_pyName")));
 				province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_code")));
 				list.add(province);
 			}while(cursor.moveToNext());
@@ -81,6 +83,7 @@ public class CoolWeatherDB {
 		if(city != null){
 			ContentValues values = new ContentValues();
 			values.put("city_name", city.getCityName());
+			values.put("city_pyName", city.getCityPyName());
 			values.put("city_code", city.getCityCode());
 			values.put("province_id", city.getProvinceId());
 			db.insert("City", null, values);
@@ -100,6 +103,7 @@ public class CoolWeatherDB {
 				City city = new City();
 				city.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
+				city.setCityPyName(cursor.getString(cursor.getColumnIndex("city_pyName")));
 				city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
 				city.setProvinceId(provinceId);
 				list.add(city);
@@ -116,6 +120,7 @@ public class CoolWeatherDB {
 		if(county != null){
 			ContentValues values = new ContentValues();
 			values.put("county_name", county.getCountyName());
+			values.put("county_pyName", county.getCountyPyName());
 			values.put("county_code", county.getCountyCode());
 			values.put("city_id", county.getCityId());
 			db.insert("County", null, values);
@@ -130,6 +135,7 @@ public class CoolWeatherDB {
 				County county = new County();
 				county.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
+				county.setCountyPyName(cursor.getString(cursor.getColumnIndex("county_pyName")));
 				county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
 				county.setCityId(cityId);
 				list.add(county);

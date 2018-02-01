@@ -1,12 +1,12 @@
 package com.coolweather.app.activity;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -51,11 +51,15 @@ public class ChooseAreaActivity extends Activity{
 	//当前选中的级别
 	private int currentLevel;
 	
+	//@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
+		
+		//StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();  
+		//StrictMode.setThreadPolicy(policy);
 		
 		listView = (ListView) findViewById(R.id.list_view);
 		titleText = (TextView) findViewById(R.id.title_text);
@@ -79,6 +83,7 @@ public class ChooseAreaActivity extends Activity{
 	
 	/**
 	 * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询
+	 * @throws  
 	 */
 	private void queryProvinces(){
 		provinceList = coolWeatherDB.loadProvinces();
@@ -111,7 +116,7 @@ public class ChooseAreaActivity extends Activity{
 			titleText.setText(selectedProvince.getProvinceName());
 			currentLevel =LEVEL_CITY;
 		} else {
-			quertFromServer(selectedProvince.getProvinceCode(), "city");
+			quertFromServer(selectedProvince.getProvincePyName(), "city");
 		}
 	}
 	
@@ -130,37 +135,56 @@ public class ChooseAreaActivity extends Activity{
 			titleText.setText(selectedCity.getCityName());
 			currentLevel = LEVEL_COUNTY;
 		} else {
-			quertFromServer(selectedCity.getCityCode(), "county");
+			quertFromServer(selectedCity.getCityPyName(), "county");
 		}
 	}
 	
 	/**
 	 * 根据传入的代号和类型从服务器上查询省市县数据
-	 * @param code 代号
+	 * @param pyName 地址拼音名称
 	 * @param type 类型
 	 */
-	private void quertFromServer(final String code, final String type){
-		String address;
-		if(!TextUtils.isEmpty(code)){
-			///http://flash.weather.com.cn/wmaps/xml/yueyang.xml
-			address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";
-		} else {
-			//http://flash.weather.com.cn/wmaps/xml/china.xml
-			//https://free-api.heweather.com
-			//https://free-api.heweather.com/s6/weather/forecast?location=beijing&key=8d2f6aae5270454ebb88f4bdb4b801fd
+	private void quertFromServer(final String pyName, final String type){
+		String address = "";
+		String key = "8d2f6aae5270454ebb88f4bdb4b801fd";
+		if("province".equals(type)){
 			address = "http://flash.weather.com.cn/wmaps/xml/china.xml";
+		} else if(!"province".equals(type)){
+			address = "https://api.heweather.com/s6/weather?location=" + pyName + "&key=" + key;
 		}
 		showProgressDialog();
+//		try{
+//	        if (conn.getResponseCode() != 200) {
+//	        	System.out.println(3);
+//	            throw new RuntimeException("请求url失败");
+//	        }
+//	        InputStream inStream = conn.getInputStream();
+//	        List<Province> provinces = StreamTool.parseXML(inStream);
+//	        for(Province p : provinces){
+//				coolWeatherDB.saveProvince(p);
+//			}
+//	        closeProgressDialog();
+//			if("province".equals(type)){
+//				queryProvinces();
+//			} else if("city".equals(type)){
+//				queryCities();
+//			} else if("county".equals(type)){
+//				queryCounties();
+//			}
+//	        inStream.close();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
 		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
 			@Override
-			public void onFinish(String response) {
+			public void onFinish(InputStream inStream) throws Exception {
 				boolean result = false;
 				if("province".equals(type)){
-					result = Utility.handleProvincesResponse(coolWeatherDB, response);
+					result = Utility.handleProvincesResponse(coolWeatherDB, inStream);
 				} else if("city".equals(type)){
-					result = Utility.handleCitiesResponse(coolWeatherDB, response, selectedProvince.getId());
+					result = Utility.handleCitiesResponse(coolWeatherDB, inStream, selectedProvince.getId());
 				} else if("county".equals(type)) {
-					result = Utility.handleCountiesResponse(coolWeatherDB, response, selectedCity.getId());
+					result = Utility.handleCountiesResponse(coolWeatherDB, inStream, selectedCity.getId());
 				}
 				if(result){
 					//通过runOnUiThread()方法回到主线程处理逻辑

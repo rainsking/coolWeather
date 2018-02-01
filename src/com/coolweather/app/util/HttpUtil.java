@@ -1,8 +1,6 @@
 package com.coolweather.app.util;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -20,14 +18,9 @@ public class HttpUtil {
 					connection.setConnectTimeout(8000);
 					connection.setReadTimeout(8000);
 					InputStream in = connection.getInputStream();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-					StringBuilder response = new StringBuilder();
-					String line;
-					while ((line = reader.readLine()) != null) {
-						response.append(line);
-					}
+			
 					if(listener != null){
-						listener.onFinish(response.toString());
+						listener.onFinish(in);
 					}
 				} catch (Exception e) {
 					if(listener != null){
