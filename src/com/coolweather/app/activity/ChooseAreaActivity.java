@@ -74,8 +74,7 @@ public class ChooseAreaActivity extends Activity{
 				}
 			}
 		});
-		//queryProvinces();  //加载省级数据
-		queryCities();
+		queryProvinces();  //加载省级数据
 	}
 	
 	/**
@@ -103,16 +102,20 @@ public class ChooseAreaActivity extends Activity{
 	 */
 	private void queryCities(){
 		cityList = coolWeatherDB.loadCities(selectedProvince.getId());
+		System.out.println("11111111111111");
 		if(cityList.size() > 0){
+			System.out.println("22222222222222");
 			dataList.clear();
 			for(City city : cityList){
 				dataList.add(city.getCityName());
 			}
+			System.out.println("33333333333s");
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			titleText.setText(selectedProvince.getProvinceName());
 			currentLevel =LEVEL_CITY;
 		} else {
+			System.out.println("33333333333333333333"+selectedProvince.getProvincePyName());
 			quertFromServer(selectedProvince.getProvincePyName(), "city");
 		}
 	}
@@ -147,16 +150,20 @@ public class ChooseAreaActivity extends Activity{
 		if("province".equals(type)){
 			address = "http://flash.weather.com.cn/wmaps/xml/china.xml";
 		} else if("city".equals(type)){
-			//address = "http://flash.weather.com.cn/wmaps/xml/" + pyName + ".xml";
-			address = "http://flash.weather.com.cn/wmaps/xml/hunan.xml";
+			address = "http://flash.weather.com.cn/wmaps/xml/" + pyName + ".xml";
+			//address = "http://flash.weather.com.cn/wmaps/xml/hunan.xml";
 		} else {
 			//https://free-api.heweather.com/s6/weather/forecast?location=xiangyin&key=8d2f6aae5270454ebb88f4bdb4b801fd
 			address = "https://free-api.heweather.com/s6/weather/forecast?location=" + pyName + "&key=" + key;
 		}
 		showProgressDialog();
+		System.out.println("444444444444");
+		System.out.println(address);
 		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+			
 			@Override
 			public void onFinish(InputStream inStream) throws Exception {
+				System.out.println("888888888888888");
 				boolean result = false;
 				if("province".equals(type)){
 					result = Utility.handleProvincesResponse(coolWeatherDB, inStream);
@@ -167,6 +174,7 @@ public class ChooseAreaActivity extends Activity{
 					result = Utility.handleCountiesResponse(coolWeatherDB, inStream, selectedCity.getId());
 				}
 				if(result){
+					
 					//通过runOnUiThread()方法回到主线程处理逻辑
 					runOnUiThread(new Runnable() {
 						@Override
