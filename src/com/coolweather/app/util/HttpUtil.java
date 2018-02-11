@@ -1,35 +1,30 @@
 package com.coolweather.app.util;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
-public class HttpUtil {
+public class HttpUtil{
+	private static boolean iswook = false;
 	public static void sendHttpRequest(final String address , final HttpCallbackListener listener){
+		iswook = true;
 		new Thread(new Runnable() {
-			private volatile boolean stop = false;
-			public void stopThread() {
-	            this.stop = true;
-	        }
-			
 			@Override
 			public void run() {
-				while (!stop) {
-					HttpsURLConnection connection = null;
+				if(iswook) {
+					HttpURLConnection connection = null;
 					try {
 						URL url = new URL(address);
-						connection = (HttpsURLConnection) url.openConnection();
+						connection = (HttpURLConnection) url.openConnection();
 						connection.setRequestMethod("GET");
 						connection.setConnectTimeout(8000);
 						connection.setReadTimeout(8000);
 						InputStream in = connection.getInputStream();
-				
 						if(listener != null){
 							listener.onFinish(in);
 						}
-						System.out.println("66666666666666666666");
-						//in.close();
+						in.close();
+						
 					} catch (Exception e) {
 						if(listener != null){
 							listener.onError(e);
@@ -38,9 +33,16 @@ public class HttpUtil {
 						if(connection != null){
 							connection.disconnect();
 						}
+						iswook = false;
 					}
 				}
 			}
 		}).start();
 	}
+	
+	public static void stop() {  
+	    if (iswook) {  
+	    	iswook = false;  
+	    }  
+	}  
 }

@@ -84,8 +84,8 @@ public class ParseXML {
                     if("city".equals(name))
                     {
                     	city = new City();
-                    	city.setCityName(parser.getAttributeValue(10));
-                    	city.setCityPyName(parser.getAttributeValue(11));
+                    	city.setCityName(parser.getAttributeValue(2));
+                    	city.setCityPyName(parser.getAttributeValue(5));
                     	city.setProvinceId(provinceId);
                     	cities.add(city);
                     }

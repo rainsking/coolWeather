@@ -1,12 +1,19 @@
 package com.coolweather.app.activity;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -23,9 +30,10 @@ import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
 import com.coolweather.app.util.HttpCallbackListener;
 import com.coolweather.app.util.HttpUtil;
+import com.coolweather.app.util.ParseXML;
 import com.coolweather.app.util.Utility;
 
-public class ChooseAreaActivity extends Activity{
+public class MainActivity extends Activity{
 
 	public static final int LEVEL_PROVINCE = 0;
 	public static final int LEVEL_CITY = 1;
@@ -60,7 +68,7 @@ public class ChooseAreaActivity extends Activity{
 		//StrictMode.setThreadPolicy(policy);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_choose_area);
+		setContentView(R.layout.activity_main);
 		
 		listView = (ListView) findViewById(R.id.list_view);
 		titleText = (TextView) findViewById(R.id.title_text);
@@ -167,7 +175,7 @@ public class ChooseAreaActivity extends Activity{
 					@Override
 					public void run() {
 						closeProgressDialog();
-						Toast.makeText(ChooseAreaActivity.this, "º”‘ÿ ß∞‹", Toast.LENGTH_SHORT).show();
+						Toast.makeText(MainActivity.this, "º”‘ÿ ß∞‹", Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
